@@ -40,12 +40,12 @@ TEXT_BRIGHT = "#ffffff"      # headings
 SEL_BG      = "#252535"
 
 # ── Typography ─────────────────────────────────────────────────────────────
-UI_FONT     = ("Segoe UI",    10)
-UI_BOLD     = ("Segoe UI",    10, "bold")
-UI_SMALL    = ("Segoe UI",     9)
-UI_TITLE    = ("Segoe UI",    11, "bold")
-MONO        = ("Consolas",    10)
-MONO_SMALL  = ("Consolas",     9)
+UI_FONT     = ("Segoe UI",    13)
+UI_BOLD     = ("Segoe UI",    13, "bold")
+UI_SMALL    = ("Segoe UI",    12)
+UI_TITLE    = ("Segoe UI",    14, "bold")
+MONO        = ("Consolas",    13)
+MONO_SMALL  = ("Consolas",    12)
 
 ALIGNMENTS = {"1 byte": 1, "2 bytes": 2, "4 bytes": 4, "8 bytes": 8}
 
@@ -66,7 +66,7 @@ def _btn(parent, text, cmd, kind="default", **kw):
     font = kw.pop("font", UI_BOLD if kind == "primary" else UI_FONT)
     return tk.Button(parent, text=text, command=cmd,
                      font=font, bd=0, relief=tk.FLAT, cursor="hand2",
-                     padx=kw.pop("padx", 12), pady=kw.pop("pady", 5),
+                     padx=kw.pop("padx", 16), pady=kw.pop("pady", 8),
                      **s, **kw)
 
 
@@ -97,7 +97,7 @@ def _apply_styles():
 
     s.configure("Treeview",
                 background=SURFACE2, foreground=TEXT,
-                fieldbackground=SURFACE2, rowheight=24,
+                fieldbackground=SURFACE2, rowheight=36,
                 font=MONO_SMALL, borderwidth=0)
     s.configure("Treeview.Heading",
                 background=SURFACE, foreground=TEXT_DIM,
@@ -156,7 +156,7 @@ class ProcessDialog(tk.Toplevel):
         super().__init__(parent)
         self.title("Attach to Process")
         self.configure(bg=BG)
-        self.geometry("560x540")
+        self.geometry("700x620")
         self.resizable(True, True)
         self.transient(parent)
         self.grab_set()
@@ -248,8 +248,9 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("MemEd")
-        self.geometry("1100x720")
-        self.minsize(820, 560)
+        self.geometry("1280x800")
+        self.minsize(900, 600)
+        self.after(10, lambda: self.state("zoomed"))
         self.configure(bg=BG)
 
         self._engine  = MemoryEngine()
@@ -336,8 +337,8 @@ class App(tk.Tk):
                                sashpad=0, bd=0)
         body.pack(fill=tk.BOTH, expand=True)
 
-        sidebar = tk.Frame(body, bg=SURFACE, width=260)
-        body.add(sidebar, minsize=220, width=260)
+        sidebar = tk.Frame(body, bg=SURFACE, width=320)
+        body.add(sidebar, minsize=280, width=320)
         self._build_sidebar(sidebar)
 
         right = tk.Frame(body, bg=BG)
@@ -347,40 +348,40 @@ class App(tk.Tk):
         self._build_statusbar()
 
     def _build_titlebar(self):
-        bar = tk.Frame(self, bg=SURFACE, height=46)
+        bar = tk.Frame(self, bg=SURFACE, height=52)
         bar.pack(fill=tk.X)
         bar.pack_propagate(False)
 
         # Left: app name + process badge
         left = tk.Frame(bar, bg=SURFACE)
         left.pack(side=tk.LEFT, fill=tk.Y, padx=14)
-        tk.Label(left, text="MEM", font=("Segoe UI", 12, "bold"),
-                 fg=BLUE, bg=SURFACE).pack(side=tk.LEFT, pady=12)
-        tk.Label(left, text="ED", font=("Segoe UI", 12, "bold"),
+        tk.Label(left, text="MEM", font=("Segoe UI", 14, "bold"),
+                 fg=BLUE, bg=SURFACE).pack(side=tk.LEFT, pady=8)
+        tk.Label(left, text="ED", font=("Segoe UI", 14, "bold"),
                  fg=TEXT, bg=SURFACE).pack(side=tk.LEFT)
 
         tk.Frame(bar, bg=BORDER, width=1).pack(side=tk.LEFT, fill=tk.Y, padx=12, pady=8)
 
         self._proc_label = tk.Label(bar, text="No process attached",
                                      font=UI_FONT, fg=TEXT_DIM, bg=SURFACE)
-        self._proc_label.pack(side=tk.LEFT, pady=14)
+        self._proc_label.pack(side=tk.LEFT, pady=8)
 
         # Right: action buttons
         right = tk.Frame(bar, bg=SURFACE)
         right.pack(side=tk.RIGHT, fill=tk.Y, padx=10)
 
-        self._stealth_badge = tk.Label(right, text="🛡 STEALTH",
-                                        font=UI_SMALL, fg=GREEN, bg=SURFACE,
+        self._stealth_badge = tk.Label(right, text="🛡",
+                                        font=UI_FONT, fg=GREEN, bg=SURFACE,
                                         cursor="hand2")
-        self._stealth_badge.pack(side=tk.RIGHT, padx=(0, 8), pady=14)
+        self._stealth_badge.pack(side=tk.RIGHT, padx=(0, 6), pady=8)
         self._stealth_badge.bind("<Button-1>", lambda _: self._open_stealth_panel())
 
-        tk.Frame(right, bg=BORDER, width=1).pack(side=tk.RIGHT, fill=tk.Y, pady=8, padx=4)
+        tk.Frame(right, bg=BORDER, width=1).pack(side=tk.RIGHT, fill=tk.Y, pady=6, padx=4)
 
         _btn(right, "Detach", self._detach, kind="ghost",
-             font=UI_SMALL, padx=10, pady=4).pack(side=tk.RIGHT, padx=2, pady=10)
-        _btn(right, "+ Open Process", self._open_process, kind="primary",
-             font=UI_SMALL, padx=10, pady=4).pack(side=tk.RIGHT, padx=2, pady=10)
+             font=UI_SMALL, padx=10, pady=5).pack(side=tk.RIGHT, padx=2, pady=6)
+        _btn(right, "+ Process", self._open_process, kind="primary",
+             font=UI_SMALL, padx=10, pady=5).pack(side=tk.RIGHT, padx=2, pady=6)
 
     def _build_statusbar(self):
         bar = tk.Frame(self, bg=SURFACE, height=26)
@@ -463,21 +464,21 @@ class App(tk.Tk):
         scan_btns = tk.Frame(p, bg=SURFACE)
         scan_btns.pack(fill=tk.X, pady=(0, 4))
         self._btn_new = _btn(scan_btns, "New Scan", self._new_scan, kind="primary",
-                              padx=0, pady=7)
+                              padx=0, pady=10)
         self._btn_new.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 3))
         self._btn_next = _btn(scan_btns, "Next Scan", self._next_scan, kind="success",
-                               padx=0, pady=7, state=tk.DISABLED)
+                               padx=0, pady=10, state=tk.DISABLED)
         self._btn_next.config(disabledforeground=TEXT_DIM)
         self._btn_next.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(3, 0))
 
         cancel_reset = tk.Frame(p, bg=SURFACE)
         cancel_reset.pack(fill=tk.X, pady=(0, 4))
         self._btn_cancel = _btn(cancel_reset, "Cancel", self._cancel_scan,
-                                 kind="ghost", font=UI_SMALL, padx=0, pady=4,
+                                 kind="ghost", font=UI_FONT, padx=0, pady=7,
                                  state=tk.DISABLED)
         self._btn_cancel.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 3))
         _btn(cancel_reset, "Reset", self._reset_scan,
-             kind="ghost", font=UI_SMALL, padx=0, pady=4
+             kind="ghost", font=UI_FONT, padx=0, pady=7
              ).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(3, 0))
 
         # ── FREEZE CONTROLS ────────────────────────────────────────────────
@@ -487,20 +488,20 @@ class App(tk.Tk):
         freeze_btns = tk.Frame(p, bg=SURFACE)
         freeze_btns.pack(fill=tk.X, pady=(0, 4))
         _btn(freeze_btns, "Freeze All", self._toggle_freeze_all,
-             kind="orange", font=UI_SMALL, padx=0, pady=5
+             kind="orange", font=UI_FONT, padx=0, pady=8
              ).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 3))
         _btn(freeze_btns, "Unfreeze All", self._emergency_unfreeze,
-             kind="ghost", font=UI_SMALL, padx=0, pady=5
+             kind="ghost", font=UI_FONT, padx=0, pady=8
              ).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(3, 0))
 
         ks_btns = tk.Frame(p, bg=SURFACE)
         ks_btns.pack(fill=tk.X, pady=(0, 4))
         self._pause_btn = _btn(ks_btns, "⏸  Pause  [F11]",
                                 self._emergency_pause_toggle,
-                                kind="ghost", font=UI_SMALL, padx=0, pady=4)
+                                kind="ghost", font=UI_FONT, padx=0, pady=7)
         self._pause_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 3))
         _btn(ks_btns, "⚙  Settings", self._open_freeze_settings,
-             kind="ghost", font=UI_SMALL, padx=0, pady=4
+             kind="ghost", font=UI_FONT, padx=0, pady=7
              ).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(3, 0))
 
         # ── TOOLS ──────────────────────────────────────────────────────────
@@ -508,13 +509,13 @@ class App(tk.Tk):
         _section(p, "Tools")
 
         _btn(p, "Stealth Settings", self._open_stealth_panel,
-             kind="ghost", font=UI_SMALL, padx=0, pady=5
+             kind="ghost", font=UI_FONT, padx=0, pady=7
              ).pack(fill=tk.X, pady=(0, 3))
-        _btn(p, "Save Address List  Ctrl+S", self._save_address_list,
-             kind="ghost", font=UI_SMALL, padx=0, pady=5
+        _btn(p, "Save  Ctrl+S", self._save_address_list,
+             kind="ghost", font=UI_FONT, padx=0, pady=7
              ).pack(fill=tk.X, pady=(0, 3))
-        _btn(p, "Load Address List  Ctrl+O", self._load_address_list,
-             kind="ghost", font=UI_SMALL, padx=0, pady=5
+        _btn(p, "Load  Ctrl+O", self._load_address_list,
+             kind="ghost", font=UI_FONT, padx=0, pady=7
              ).pack(fill=tk.X)
 
         # Bottom padding
@@ -533,7 +534,7 @@ class App(tk.Tk):
         self._build_results(top)
 
         bot = tk.Frame(pane, bg=BG)
-        pane.add(bot, minsize=160)
+        pane.add(bot, minsize=280)
         self._build_addr_table(bot)
 
     def _build_results(self, parent):
@@ -555,8 +556,8 @@ class App(tk.Tk):
         cols = ("Address", "Value", "Previous", "Type")
         self._result_tree = ttk.Treeview(tf, columns=cols,
                                           show="headings", selectmode="extended")
-        for col, w, anc in [("Address", 160, tk.W), ("Value", 110, tk.E),
-                             ("Previous", 110, tk.E), ("Type", 80, tk.CENTER)]:
+        for col, w, anc in [("Address", 210, tk.W), ("Value", 140, tk.E),
+                             ("Previous", 140, tk.E), ("Type", 100, tk.CENTER)]:
             self._result_tree.heading(col, text=col)
             self._result_tree.column(col, width=w, anchor=anc)
 
@@ -589,6 +590,19 @@ class App(tk.Tk):
              ).pack(side=tk.RIGHT, padx=1)
         tk.Frame(hdr, bg=BORDER, width=1).pack(side=tk.RIGHT, fill=tk.Y, pady=2, padx=6)
 
+        # Action bar — pack BEFORE treeview so it's not pushed out of bounds
+        ab = tk.Frame(parent, bg=BG, padx=12, pady=8)
+        ab.pack(fill=tk.X, side=tk.BOTTOM)
+        for text, cmd, kind in [
+            ("Add Address",   self._add_address_manual,  "default"),
+            ("Freeze",        self._toggle_freeze,       "orange"),
+            ("Edit Value",    self._edit_addr_value,     "default"),
+            ("Remove",        self._delete_addr_row,     "danger"),
+            ("Clear All",     self._clear_address_table, "danger"),
+        ]:
+            _btn(ab, text, cmd, kind=kind,
+                 font=UI_FONT, padx=14, pady=6).pack(side=tk.LEFT, padx=(0, 6))
+
         # Tree
         tf = tk.Frame(parent, bg=BG, padx=12)
         tf.pack(fill=tk.BOTH, expand=True)
@@ -601,11 +615,11 @@ class App(tk.Tk):
         self._addr_tree.heading("Description", text="Description")
         self._addr_tree.heading("Type",        text="Type")
         self._addr_tree.heading("Value",       text="Value")
-        self._addr_tree.column("S",           width=22,  anchor=tk.CENTER)
-        self._addr_tree.column("Address",     width=150, anchor=tk.W)
-        self._addr_tree.column("Description", width=180, anchor=tk.W)
-        self._addr_tree.column("Type",        width=72,  anchor=tk.CENTER)
-        self._addr_tree.column("Value",       width=120, anchor=tk.E)
+        self._addr_tree.column("S",           width=30,  anchor=tk.CENTER)
+        self._addr_tree.column("Address",     width=200, anchor=tk.W)
+        self._addr_tree.column("Description", width=220, anchor=tk.W)
+        self._addr_tree.column("Type",        width=90,  anchor=tk.CENTER)
+        self._addr_tree.column("Value",       width=150, anchor=tk.E)
 
         sb2 = ttk.Scrollbar(tf, orient=tk.VERTICAL, command=self._addr_tree.yview)
         self._addr_tree.configure(yscrollcommand=sb2.set)
@@ -617,18 +631,6 @@ class App(tk.Tk):
         self._addr_tree.bind("<Double-1>", self._edit_addr_value)
         self._addr_tree.bind("<Delete>",   self._delete_addr_row)
         self._addr_tree.bind("<Button-3>", self._addr_ctx_menu)
-
-        # Action bar
-        ab = tk.Frame(parent, bg=BG, padx=12, pady=6)
-        ab.pack(fill=tk.X)
-        for text, cmd, kind in [
-            ("Add Address",   self._add_address_manual, "default"),
-            ("Freeze",        self._toggle_freeze,      "orange"),
-            ("Edit Value",    self._edit_addr_value,    "default"),
-            ("Remove",        self._delete_addr_row,    "danger"),
-        ]:
-            _btn(ab, text, cmd, kind=kind,
-                 font=UI_SMALL, padx=10, pady=3).pack(side=tk.LEFT, padx=(0, 4))
 
     # ── Process ────────────────────────────────────────────────────────────
 
@@ -1199,7 +1201,7 @@ class App(tk.Tk):
                       cfg.use_nt_read_write, cfg.hide_window,
                       cfg.random_scan_delay])
         self._stealth_badge.config(
-            text="🛡 STEALTH" if any_on else "  STEALTH OFF",
+            text="🛡" if any_on else "○",
             fg=GREEN if any_on else TEXT_DIM)
 
     def _reapply_stealth(self):
