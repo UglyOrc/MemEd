@@ -42,7 +42,7 @@ class SplashScreen(tk.Tk):
     """
 
     WIDTH  = 480
-    HEIGHT = 280
+    HEIGHT = 320
 
     def __init__(self, steps: list[str], auto_close_ms: int = 4000):
         super().__init__()
@@ -56,8 +56,10 @@ class SplashScreen(tk.Tk):
         self.resizable(False, False)
         self.attributes("-topmost", True)  # stay on top until dismissed
 
-        self._center()
+        # Build first so all widgets exist, then measure and center
         self._build()
+        self.update_idletasks()
+        self._center()
         self._animate_bar()
         self._run_steps()
 
@@ -72,7 +74,7 @@ class SplashScreen(tk.Tk):
         inner.pack(fill=tk.BOTH, expand=True)
 
         # ── Top section: logo ──────────────────────────────────────────────
-        logo_frame = tk.Frame(inner, bg=BG, pady=32)
+        logo_frame = tk.Frame(inner, bg=BG, pady=20)
         logo_frame.pack(fill=tk.X)
 
         logo_row = tk.Frame(logo_frame, bg=BG)
@@ -86,10 +88,10 @@ class SplashScreen(tk.Tk):
                  font=_font(_UI, 10), fg=TEXT_DIM, bg=BG).pack()
 
         # ── Divider ────────────────────────────────────────────────────────
-        tk.Frame(inner, bg=BORDER, height=1).pack(fill=tk.X, padx=24, pady=(20, 0))
+        tk.Frame(inner, bg=BORDER, height=1).pack(fill=tk.X, padx=24, pady=(14, 0))
 
         # ── Progress bar ───────────────────────────────────────────────────
-        bar_frame = tk.Frame(inner, bg=BG, padx=24, pady=14)
+        bar_frame = tk.Frame(inner, bg=BG, padx=24, pady=10)
         bar_frame.pack(fill=tk.X)
 
         track = tk.Frame(bar_frame, bg=SURFACE2, height=4)
@@ -104,7 +106,7 @@ class SplashScreen(tk.Tk):
         self._status_var = tk.StringVar(value="Starting…")
         tk.Label(inner, textvariable=self._status_var,
                  font=_font(_UI, 9), fg=TEXT_DIM, bg=BG
-                 ).pack(pady=(0, 10))
+                 ).pack(pady=(0, 6))
 
         # ── Dots animation ─────────────────────────────────────────────────
         self._dots_var = tk.StringVar(value="")
@@ -112,19 +114,21 @@ class SplashScreen(tk.Tk):
                  font=_font(_UI, 10), fg=BLUE, bg=BG).pack()
 
         # ── Footer ─────────────────────────────────────────────────────────
-        tk.Frame(inner, bg=BORDER, height=1).pack(fill=tk.X, padx=24, pady=(16, 0))
+        tk.Frame(inner, bg=BORDER, height=1).pack(fill=tk.X, padx=24, pady=(12, 0))
         tk.Label(inner, text="v2.0.0  ·  github.com/UglyOrc/MemEd",
                  font=_font(_UI, 8), fg=TEXT_DIM, bg=BG
-                 ).pack(pady=(6, 0))
+                 ).pack(pady=(6, 10))
 
     # ── Animation ──────────────────────────────────────────────────────────
 
     def _center(self):
+        w  = self.winfo_reqwidth()  or self.WIDTH
+        h  = self.winfo_reqheight() or self.HEIGHT
         sw = self.winfo_screenwidth()
         sh = self.winfo_screenheight()
-        x  = (sw - self.WIDTH)  // 2
-        y  = (sh - self.HEIGHT) // 2
-        self.geometry(f"{self.WIDTH}x{self.HEIGHT}+{x}+{y}")
+        x  = (sw - w) // 2
+        y  = (sh - h) // 2
+        self.geometry(f"{w}x{h}+{x}+{y}")
 
     def _animate_bar(self):
         if self._done or not self.winfo_exists():
