@@ -1,5 +1,6 @@
 """
 Core memory read/write engine using Windows API via ctypes.
+
 Requires running as Administrator for most processes.
 
 Speed optimisations:
@@ -9,6 +10,7 @@ Speed optimisations:
     instead of one ReadProcessMemory call per surviving address
   - Thread pool parallelises first-scan across CPU cores
 """
+from __future__ import annotations
 
 import ctypes
 import ctypes.wintypes as wintypes
@@ -20,7 +22,7 @@ from typing import Callable, Iterator
 
 import numpy as np
 
-from stealth import (
+from memed.stealth import (
     StealthConfig, open_process_stealth, clear_debug_flags,
     nt_read, nt_write, stealth_delay, set_thread_name,
 )

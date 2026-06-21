@@ -2,21 +2,22 @@
 MemEd — Memory Editor
 Main GUI application using tkinter.
 """
+from __future__ import annotations
 
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog, filedialog
 import threading
 import os
 
-from memory_engine import (
+from memed.memory_engine import (
     MemoryEngine, list_processes, VALUE_TYPES,
     SCAN_LABELS, FIRST_SCAN_MODES, NEXT_SCAN_MODES,
     NEEDS_VALUE1, NEEDS_VALUE2,
     SCAN_EXACT, SCAN_UNKNOWN,
 )
-from freeze_manager import FreezeManager
-from stealth import get_stealth_status, hide_window
-from address_file import save as af_save, load as af_load, SavedEntry, FILE_FILTER, FILE_EXT
+from memed.freeze_manager import FreezeManager
+from memed.stealth import get_stealth_status, hide_window
+from memed.address_file import save as af_save, load as af_load, SavedEntry, FILE_FILTER, FILE_EXT
 
 # ── Palette ────────────────────────────────────────────────────────────────
 BG          = "#0f0f17"      # window background
@@ -1205,7 +1206,7 @@ class App(tk.Tk):
         if not self._engine.handle:
             messagebox.showwarning("No Process", "Attach first.", parent=self)
             return
-        from stealth import clear_debug_flags
+        from memed.stealth import clear_debug_flags
         ok  = clear_debug_flags(self._engine.handle)
         messagebox.showinfo("Stealth",
             "Debug flags cleared." if ok else
@@ -1439,6 +1440,13 @@ class StealthPanel(tk.Toplevel):
 # ── Entry point ────────────────────────────────────────────────────────────
 
 def main():
+    from memed.splash import show_splash
+    show_splash([
+        "Loading platform drivers…",
+        "Initialising scan engine…",
+        "Applying stealth configuration…",
+        "Building interface…",
+    ])
     app = App()
     app.mainloop()
 

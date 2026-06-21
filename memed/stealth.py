@@ -17,6 +17,7 @@ Techniques implemented (all user-mode, no kernel driver needed):
   8. Spoof thread name              - set MemEd worker thread name to something
        innocuous so process explorer / AC thread scanners don't flag it.
 """
+from __future__ import annotations
 
 import ctypes
 import ctypes.wintypes as wintypes

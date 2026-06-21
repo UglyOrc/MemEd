@@ -10,6 +10,7 @@ Safety features:
   - Emergency kill-switch: unfreeze_all() callable from any thread instantly
   - Callbacks: notify UI when an address is auto-disabled due to errors
 """
+from __future__ import annotations
 
 import threading
 import time

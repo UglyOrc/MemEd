@@ -13,6 +13,8 @@ Speed optimisations (same as Windows version):
   - Thread pool parallelises first-scan across CPU cores
 """
 
+from __future__ import annotations
+
 import os
 import struct
 import time
@@ -22,7 +24,7 @@ from typing import Callable, Iterator
 
 import numpy as np
 
-from stealth import (
+from memed.platforms.linux.stealth import (
     StealthConfig, open_process_stealth, clear_debug_flags,
     nt_read, nt_write, stealth_delay, set_thread_name,
 )

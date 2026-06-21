@@ -5,6 +5,7 @@ The Windows anti-detection techniques (NT direct calls, PEB flag clearing,
 SetWindowDisplayAffinity) don't exist on Linux. This module exposes the
 same API so the rest of MemEd compiles unchanged; all stealth ops are no-ops.
 """
+from __future__ import annotations
 
 import random
 import time
