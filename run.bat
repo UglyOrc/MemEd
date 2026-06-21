@@ -1,9 +1,9 @@
 @echo off
-:: Run MemEd as Administrator (required for process memory access)
+:: Run MemEd — requests Administrator privileges automatically
 net session >nul 2>&1
 if %errorLevel% neq 0 (
     echo Requesting administrator privileges...
-    powershell -Command "Start-Process -FilePath 'python' -ArgumentList '\"%~dp0app.py\"' -Verb RunAs"
+    powershell -Command "Start-Process -FilePath 'python' -ArgumentList '\"%~dp0main.py\"' -Verb RunAs"
 ) else (
-    python "%~dp0app.py"
+    python "%~dp0main.py"
 )
